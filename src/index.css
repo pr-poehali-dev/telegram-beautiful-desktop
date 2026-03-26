@@ -247,3 +247,72 @@
 .ripple:active::after {
   opacity: 1;
 }
+
+@keyframes waveBar {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+.wave-bar {
+  animation: waveBar 1.2s ease-in-out infinite;
+}
+.wave-bar:nth-child(1) {
+  animation-delay: 0s;
+}
+.wave-bar:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.wave-bar:nth-child(3) {
+  animation-delay: 0.24s;
+}
+.wave-bar:nth-child(4) {
+  animation-delay: 0.08s;
+}
+.wave-bar:nth-child(5) {
+  animation-delay: 0.18s;
+}
+.wave-bar:nth-child(6) {
+  animation-delay: 0.3s;
+}
+.wave-bar:nth-child(7) {
+  animation-delay: 0.06s;
+}
+.wave-bar:nth-child(8) {
+  animation-delay: 0.2s;
+}
+
+@keyframes callPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.85;
+  }
+}
+.animate-call-pulse {
+  animation: callPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ringWave {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+.animate-ring-wave {
+  animation: ringWave 1.5s ease-out infinite;
+}
+.animate-ring-wave-2 {
+  animation: ringWave 1.5s ease-out 0.5s infinite;
+}
