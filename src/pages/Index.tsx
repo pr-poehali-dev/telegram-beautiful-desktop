@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { Tab, CallType, CHATS } from "@/components/messenger/messenger-data";
+import { Tab, CallType, CHATS, MESSAGES, Message } from "@/components/messenger/messenger-data";
 import { CallScreen, ChatScreen } from "@/components/messenger/messenger-screens";
 import { ChatsTab, ContactsTab, ProfileTab, SettingsTab, BottomNav } from "@/components/messenger/messenger-tabs";
+
+function getNow() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
 
 export default function Index() {
   const [tab, setTab] = useState<Tab>("chats");
@@ -10,8 +15,61 @@ export default function Index() {
   const [isRecording, setIsRecording] = useState(false);
   const [showCall, setShowCall] = useState<CallType>(null);
   const [darkToggle, setDarkToggle] = useState(true);
+  const [chatMessages, setChatMessages] = useState<Record<number, Message[]>>({});
 
   const activeChat = CHATS.find((c) => c.id === openChatId);
+
+  const getMessages = (chatId: number): Message[] =>
+    chatMessages[chatId] ?? MESSAGES;
+
+  const handleSend = () => {
+    if (!msgInput.trim() || openChatId === null) return;
+    const newMsg: Message = {
+      id: Date.now(),
+      from: "me",
+      text: msgInput.trim(),
+      time: getNow(),
+      type: "text",
+    };
+    setChatMessages((prev) => ({
+      ...prev,
+      [openChatId]: [...getMessages(openChatId), newMsg],
+    }));
+    setMsgInput("");
+
+    // Имитация ответа через 1.5 сек
+    const replies = [
+      "Понял, окей 👍",
+      "Хорошо, договорились!",
+      "Отлично 🔥",
+      "Ок, увидимся!",
+      "Супер, спасибо!",
+      "👌",
+      "Ждём тебя!",
+    ];
+    const delay = 1000 + Math.random() * 1000;
+    setTimeout(() => {
+      const reply: Message = {
+        id: Date.now() + 1,
+        from: "them",
+        text: replies[Math.floor(Math.random() * replies.length)],
+        time: getNow(),
+        type: "text",
+      };
+      setChatMessages((prev) => ({
+        ...prev,
+        [openChatId]: [...(prev[openChatId] ?? MESSAGES), reply],
+      }));
+    }, delay);
+  };
+
+  const handleSendOrRecord = () => {
+    if (msgInput.trim()) {
+      handleSend();
+    } else {
+      setIsRecording(!isRecording);
+    }
+  };
 
   // ── CALL SCREEN ──────────────────────────────────────────────
   if (showCall) {
@@ -29,16 +87,14 @@ export default function Index() {
     return (
       <ChatScreen
         activeChat={activeChat}
+        messages={getMessages(openChatId)}
         msgInput={msgInput}
         isRecording={isRecording}
-        onBack={() => setOpenChatId(null)}
+        onBack={() => { setOpenChatId(null); setIsRecording(false); }}
         onCallAudio={() => setShowCall("audio")}
         onCallVideo={() => setShowCall("video")}
         onMsgChange={setMsgInput}
-        onSendOrRecord={() => {
-          if (msgInput) { setMsgInput(""); }
-          else { setIsRecording(!isRecording); }
-        }}
+        onSendOrRecord={handleSendOrRecord}
       />
     );
   }

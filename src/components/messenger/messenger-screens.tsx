@@ -1,5 +1,6 @@
+import { useEffect, useRef } from "react";
 import Icon from "@/components/ui/icon";
-import { CallType, Chat, MESSAGES } from "./messenger-data";
+import { CallType, Chat, Message } from "./messenger-data";
 import { Avatar, WaveVoice } from "./messenger-shared";
 
 // ── CALL SCREEN ───────────────────────────────────────────────
@@ -84,6 +85,7 @@ export function CallScreen({ showCall, activeChat, onEndCall }: CallScreenProps)
 
 interface ChatScreenProps {
   activeChat: Chat | undefined;
+  messages: Message[];
   msgInput: string;
   isRecording: boolean;
   onBack: () => void;
@@ -95,6 +97,7 @@ interface ChatScreenProps {
 
 export function ChatScreen({
   activeChat,
+  messages,
   msgInput,
   isRecording,
   onBack,
@@ -103,6 +106,12 @@ export function ChatScreen({
   onMsgChange,
   onSendOrRecord,
 }: ChatScreenProps) {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <div className="fixed inset-0 flex flex-col animate-fade-in" style={{ background: "#0d0d1a" }}>
       {/* Subtle background */}
@@ -163,7 +172,7 @@ export function ChatScreen({
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2 relative z-10">
-        {MESSAGES.map((m, i) => (
+        {messages.map((m, i) => (
           <div
             key={m.id}
             className={`flex ${m.from === "me" ? "justify-end" : "justify-start"}`}
@@ -215,6 +224,7 @@ export function ChatScreen({
             )}
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}
