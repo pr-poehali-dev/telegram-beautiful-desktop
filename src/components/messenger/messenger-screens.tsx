@@ -88,6 +88,7 @@ interface ChatScreenProps {
   messages: Message[];
   msgInput: string;
   isRecording: boolean;
+  isTyping: boolean;
   onBack: () => void;
   onCallAudio: () => void;
   onCallVideo: () => void;
@@ -100,6 +101,7 @@ export function ChatScreen({
   messages,
   msgInput,
   isRecording,
+  isTyping,
   onBack,
   onCallAudio,
   onCallVideo,
@@ -149,8 +151,8 @@ export function ChatScreen({
               <Icon name="BadgeCheck" size={13} className="text-cyan-400 flex-shrink-0" />
             )}
           </div>
-          <p className={`text-xs ${activeChat!.online ? "text-emerald-400" : "text-white/40"}`}>
-            {activeChat!.online ? "в сети" : "был(а) недавно"}
+          <p className={`text-xs transition-all duration-300 ${isTyping ? "text-violet-400" : activeChat!.online ? "text-emerald-400" : "text-white/40"}`}>
+            {isTyping ? "печатает..." : activeChat!.online ? "в сети" : "был(а) недавно"}
           </p>
         </div>
         <button
@@ -224,6 +226,23 @@ export function ChatScreen({
             )}
           </div>
         ))}
+        {/* Typing indicator bubble */}
+        {isTyping && (
+          <div className="flex justify-start animate-fade-in">
+            <div className="glass-2 rounded-2xl rounded-bl-sm px-4 py-3 flex items-center gap-1.5">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="w-2 h-2 rounded-full bg-violet-400"
+                  style={{
+                    animation: "typingDot 1.2s ease-in-out infinite",
+                    animationDelay: `${i * 0.2}s`,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 

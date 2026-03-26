@@ -16,6 +16,7 @@ export default function Index() {
   const [showCall, setShowCall] = useState<CallType>(null);
   const [darkToggle, setDarkToggle] = useState(true);
   const [chatMessages, setChatMessages] = useState<Record<number, Message[]>>({});
+  const [isTyping, setIsTyping] = useState(false);
 
   const activeChat = CHATS.find((c) => c.id === openChatId);
 
@@ -37,7 +38,9 @@ export default function Index() {
     }));
     setMsgInput("");
 
-    // Имитация ответа через 1.5 сек
+    // Показываем "печатает..." сразу
+    setIsTyping(true);
+
     const replies = [
       "Понял, окей 👍",
       "Хорошо, договорились!",
@@ -47,8 +50,9 @@ export default function Index() {
       "👌",
       "Ждём тебя!",
     ];
-    const delay = 1000 + Math.random() * 1000;
+    const delay = 1200 + Math.random() * 1200;
     setTimeout(() => {
+      setIsTyping(false);
       const reply: Message = {
         id: Date.now() + 1,
         from: "them",
@@ -90,7 +94,8 @@ export default function Index() {
         messages={getMessages(openChatId)}
         msgInput={msgInput}
         isRecording={isRecording}
-        onBack={() => { setOpenChatId(null); setIsRecording(false); }}
+        isTyping={isTyping}
+        onBack={() => { setOpenChatId(null); setIsRecording(false); setIsTyping(false); }}
         onCallAudio={() => setShowCall("audio")}
         onCallVideo={() => setShowCall("video")}
         onMsgChange={setMsgInput}

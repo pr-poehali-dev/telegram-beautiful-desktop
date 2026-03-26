@@ -316,3 +316,16 @@
 .animate-ring-wave-2 {
   animation: ringWave 1.5s ease-out 0.5s infinite;
 }
+
+@keyframes typingDot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-5px);
+    opacity: 1;
+  }
+}
